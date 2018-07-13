@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: default
+  name: wp-cli
+  labels:
+    name: wp-cli
+spec:
+  template:
+    spec:
+      schedulerName: stork
+      restartPolicy: OnFailure
+      containers:
+      - image: tatemz/wp-cli
+        name: wp-cli
+        imagePullPolicy: Always
+        args: ["wp","plugin","activate","Basic-Auth","--path=/var/www/html"] 
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          value: password
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
