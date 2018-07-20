@@ -10,10 +10,23 @@ spec:
     spec:
       schedulerName: stork
       restartPolicy: OnFailure
+      initContainers:
+      - image: tatemz/wp-cli
+        name: init-wp
+        imagePullPolicy: IfNotPresent
+        args: ["wp","core","install","--url=http://70.0.149.30303","--title=wp-load","--admin_user=loadgenuser","--admin_password=loadgenpass","--admin_email=testuser@generic.com"]
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          value: password
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
       containers:
       - image: tatemz/wp-cli
         name: wp-cli
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         args: ["wp","plugin","activate","Basic-Auth","--path=/var/www/html"] 
         env:
         - name: WORDPRESS_DB_HOST

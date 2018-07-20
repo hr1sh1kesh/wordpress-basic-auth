@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wordpress-attack
+  labels:
+    name: wordpress-attack
+spec:
+  template:
+    spec:
+    containers:
+    - image: hrishi/wp-attack:v1
+        name: wordpress-attack
+        imagePullPolicy: IfNotPresent
+        args: ["vegeta-wp-load","loadgen","-a","http://70.0.149.108:30303/","-n","5","-d","50","-u","loadgenuser","-p","loadgenpass"]
